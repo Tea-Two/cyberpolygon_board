@@ -1,0 +1,136 @@
+ {% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="h10-f">НАСТРОЙКИ</h1>
+	</div>
+</div>
+<div class="line-4-f"></div>
+<div class="container mt-large-f pb-large-f">
+	<div class="row">
+		<div class="col-md-2 offset-md-1">
+			<div class="nav flex-column nav-pills" role="tablist">
+				<a class="button-outline-f active px-2 text-center" id="settings-profile-tab" data-toggle="pill" href="#profile" role="tab">Профиль</a>
+				<a class="button-outline-f px-2 text-center my-1" id="settings-tokens-tab" data-toggle="pill" href="#tokens" role="tab">Токены доступа</a>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="profile" role="tabpanel">
+					{% include "components/errors.html" %}
+
+					{% with form = Forms.self.SettingsForm(country=country) %}
+					{% from "macros/forms.html" import render_extra_fields %}
+					<form id="user-profile-form" method="post" accept-charset="utf-8" autocomplete="off" role="form"
+						class="form-horizontal">
+						<div class="form-group">
+							<b>{{ form.name.label(class="label-f") }}</b>
+							{{ form.name(class="form-control user-input-f text-f", value=name) }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.email.label(class="label-f") }}</b>
+							{{ form.email(class="form-control user-input-f text-f", value=email) }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.confirm.label(class="label-f") }}</b>
+							{{ form.confirm(class="form-control user-input-f text-f") }}
+						</div>
+						<div class="form-group">
+							<b>{{ form.password.label(class="label-f") }}</b>
+							{{ form.password(class="form-control user-input-f text-f") }}
+						</div>
+
+						<hr>
+
+						<div class="form-group">
+							<b>{{ form.affiliation.label(class="label-f") }}</b>
+							{{ form.affiliation(class="form-control user-input-f text-f", value=affiliation or "") }}
+						</div>
+
+						<hr>
+
+						{{ render_extra_fields(form.extra) }}
+
+						<div class="form-group">
+							<div class="form-check form-check-inline flex-wrap">
+								{{ form.millitary(class="form-check-input checkbox-f", checked=millitary) }}
+								{{ form.millitary.label(class="form-check-label label-f") }}
+								<small class="form-text text-muted text-f w-100">
+									{{ form.millitary.description }}
+								</small>
+							</div>
+						</div>
+
+						<div id="results" class="form-group">
+						</div>
+
+						<div class="form-group">
+							{{ form.submit(class="button-f float-right text-f px-4") }}
+						</div>
+					</form>
+					{% endwith %}
+				</div>
+				<div class="tab-pane fade" id="tokens" role="tabpanel">
+					{% with form = Forms.self.TokensForm() %}
+					<form method="POST" id="user-token-form">
+						<div class="form-group">
+							<b>{{ form.expiration.label(class="label-f") }}</b>
+							{{ form.expiration(class="form-control user-input-f text-f") }}
+						</div>
+
+						<div class="form-group text-right">
+							{{ form.submit(class="button-f float-right text-f") }}
+						</div>
+					</form>
+					{% endwith %}
+
+					{% if tokens %}
+					<hr>
+					<h4 class="label-f m-4">Активные токены</h4>
+					<div class="col-md-12 table-f">
+						<table class="table">
+							<thead>
+								<tr>
+									<td class="text-center"><b>Тип</b></td>
+									<td class="d-none d-md-block d-lg-block text-center"><b>Создан</b></td>
+									<td class="text-center"><b>Срок действия</b></td>
+									<td class="text-center"><b>Удалить</b></td>
+								</tr>
+							</thead>
+							<tbody>
+								{% for token in tokens %}
+								<tr>
+									<td class="text-white-f">{{ token.type }}</td>
+									<td class="d-none d-md-block d-lg-block"><span>{{ token.created | ruformat }}</span></td>
+									<td><span>{{ token.expiration | ruformat }}</span></td>
+									<td class="text-center">
+										<span class="delete-token" role="button" data-token-id="{{ token.id }}">
+											<i class="btn-fa fas fa-times"></i>
+										</span>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/settings.js') }}"></script>
+{% endblock %}

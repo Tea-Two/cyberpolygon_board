@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-pixel-green-f">ВХОД</h1>
+	</div>
+</div>
+<div class="container mt-large-f mb-large-f pb-large-f">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% include "components/errors.html" %}
+			{% if integrations.tg() %}
+			<div class="col-md-6 offset-md-3">
+				<script async src="https://telegram.org/js/telegram-widget.js?12" data-telegram-login="{{ Configs.tg_bot_username }}"
+					data-size="large" data-auth-url="/tgoauth" data-request-access="write"></script>
+			</div>
+			<hr>
+			{% endif %}
+
+			{% with form = Forms.auth.LoginForm() %}
+			<form method="post" accept-charset="utf-8" autocomplete="off">
+				<div class="form-group">
+					<b>{{ form.name.label(class="label-f") }}</b>
+					{{ form.name(class="form-control user-input-f", value=name) }}
+				</div>
+				<div class="form-group">
+					<b>{{ form.password.label(class="label-f") }}</b>
+					{{ form.password(class="form-control user-input-f", value=password) }}
+				</div>
+				<div class="row pt-3">
+					<div class="col-6">
+						<a class="float-left align-text-to-button text-f" href="{{ url_for('auth.reset_password') }}">
+							Забыли пароль?
+						</a>
+					</div>
+					<div class="col-6">
+						{{ form.submit(class="button-f float-right text-f px-5") }}
+					</div>
+				</div>
+				{{ form.nonce() }}
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

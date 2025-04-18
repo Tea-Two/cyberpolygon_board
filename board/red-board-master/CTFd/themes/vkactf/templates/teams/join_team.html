@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="h10-f">ВСТУПИТЬ В КОМАНДУ</h1>
+	</div>
+</div>
+<div class="line-4-f"></div>
+	<div class="container mt-large-f pb-large-f">
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+				{% include "components/errors.html" %}
+
+				{% with form = Forms.teams.TeamJoinForm() %}
+				<form method="POST">
+					<div class="form-group">
+						{{ form.name.label(class="label-f") }}
+						{{ form.name(class="form-control user-input-f text-f") }}
+					</div>
+					<div class="form-group">
+						{{ form.password.label(class="label-f") }}
+						{{ form.password(class="form-control user-input-f text-f") }}
+					</div>
+					<div class="row pt-3">
+						<div class="col-md-6 offset-md-6">
+							{{ form.submit(class="button-f float-right text-f px-4") }}
+						</div>
+					</div>
+					{{ form.nonce() }}
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

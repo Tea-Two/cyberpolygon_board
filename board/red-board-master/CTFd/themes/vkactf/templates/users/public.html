@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h6-f">{{ user.name }}</h1>
+
+			{% if user.team_id %}
+			<p>
+				<h2 class="box-red-f box-text-f align-middle">
+					<a href="{{ url_for('teams.public', team_id=user.team_id) }}">
+							{{ user.team.name }}
+					</a>
+				</h2>
+			</p>
+			{% endif %}
+
+			<!-- {% if user.oauth_id %}
+				<a href="https://telegram.me/{{ user.name }}">
+					<h3><span class="badge badge-primary">Telegram</span></h3>
+				</a>
+			{% endif %} -->
+
+			{% if user.affiliation %}
+				<h3 class="box-purple-f box-text-f">
+					{{ user.affiliation }}
+				</h3>
+			{% endif %}
+
+			{% if user.millitary %}
+				<h3 class="d-inline-block box-green-f box-text-f">
+					Курсант
+				</h3>
+			{% endif %}
+
+			{% for field in user.fields %}
+				<h3 class="box-green-f box-text-f">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+
+			<div>
+				<h2 class="text-center box-text-f m-10">
+					{% if account.place %}
+						{{ account.place }} <small>место</small>
+					{% endif %}
+				</h2>
+				<h2 class="text-center box-text-f m-10">
+					{% if account.place %}
+						{{ account.score }} <small>очков</small>
+					{% endif %}
+				</h2>
+			</div>
+			<div class="line-4-f"></div>
+		</div>
+	</div>
+	<div class="container pb-large-f">
+		{% include "components/errors.html" %}
+
+		{% if user.solves %}
+			<div class="row">
+				<h3 class="label-f p-4">Решения</h3>
+				<div class="col-md-12 table-f">
+					<table class="table">
+						<thead>
+						<tr>
+							<td align="center"><b>Задание</b></td>
+							<td align="center" class="d-none d-md-block d-lg-block"><b>Категория</b></td>
+							<td align="center"><b>Стоимость</b></td>
+							<td align="center"><b>Время сдачи</b></td>
+						</tr>
+						</thead>
+						<tbody>
+						{% for solve in user.solves %}
+							<tr>
+								<td align="center">
+									<a class="teamname-bold-f"
+										href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td align="center" class="d-none d-md-block d-lg-block text-white-f">{{ solve.challenge.category }}</td>
+								<td align="center" class="text-white-f">{{ solve.challenge.value }}</td>
+								<td align="center" class="solve-time text-white-f">
+									<span>{{ solve.date | ruformat }}</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="text-white-f opacity-50 text-center w-100 justify-content-center align-self-center">
+					Ещё нет решений
+				</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

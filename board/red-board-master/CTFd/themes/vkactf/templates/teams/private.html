@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h6-f" id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+			{% if team.affiliation %}
+				<h3 class="d-inline-block box-purple-f box-text-f">
+					{{ team.affiliation }}
+				</h3>
+			{% endif %}
+			{% if team.millitary %}
+				<h3 class="d-inline-block box-green-f box-text-f">
+					Курсанты
+				</h3>
+			{% endif %}
+
+			{% for field in team.fields %}
+				<h3 class="box-green-f box-text-f">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+			<div>
+			<h2 id="team-place" class="text-center box-text-f">
+				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+			and we don't want to leak their place in the CTF. #}
+				{# Public page hiding is done at the route level #}
+				{% if scores_visible() %}
+					{% if place %}
+						{{ place }} место
+					{% endif %}
+				{% endif %}
+			</h2>
+			</div>
+			<div>
+			<h2 id="team-score" class="text-center box-text-f">
+				{% if score %}
+					{{ score }} очков
+				{% endif %}
+			</h2>
+			</div>
+			<div class="py-3">
+				<a class="edit-team">
+					{% if team.captain_id == user.id %}
+						<i class="px-2 py-3" data-toggle="tooltip" data-placement="top" title="Редактировать команду"><span class="icon-f icon-team-settings-f"></span></i>
+
+						<a class="edit-captain">
+							<i class="px-2 py-3" data-toggle="tooltip" data-placement="top" title="Выбрать капитана"><span class="icon-f icon-captain-f"></span></i>
+						</a>
+
+						<a class="invite-members">
+							<i class="px-2 py-3" data-toggle="tooltip" data-placement="top" title="Пригласить пользователей"><span class="icon-f icon-share-f"></span></i>
+						</a>
+						<a class="disband-team">
+							<i class="px-2 py-3" data-toggle="tooltip" data-placement="top" title="Распустить команду"><span class="icon-f icon-delete-f"></span></i>
+						</a>
+					{% else %}
+						<i class="px-2 py-3 fa-disabled"
+						   data-toggle="tooltip"
+						   data-placement="top"
+						   title="Только капитаны команды могут редактировать информацию команды"><span class="icon-f icon-team-settings-f"></span></i>
+						<a class="edit-captain">
+							<i class="px-2 py-3 fa-disabled"
+							   data-toggle="tooltip"
+							   data-placement="top"
+							   title="Только капитаны команды могут выбрать нового капитана"><span class="icon-f icon-captain-f"></span></i>
+						</a>
+						<a class="invite-members">
+							<i class="px-2 py-3 fa-disabled"
+								data-toggle="tooltip"
+								data-placement="top"
+								title="Только капитаны команды могут генерировать ссылки на приглашение"><span class="icon-f icon-share-f"></span></i>
+						</a>
+						<a class="disband-team">
+							<i class="px-2 py-3 fa-disabled"
+								data-toggle="tooltip"
+								data-placement="top"
+								title="Только капитаны команды могут распустить команду"><span class="icon-f icon-delete-f"></span></i>
+						</a>
+					{% endif %}
+				</a>
+			</div>
+			<div class="line-4-f"></div>
+		</div>
+	</div>
+	<div class="container pb-large-f">
+		{% include "components/errors.html" %}
+
+		<br>
+		<div class="row">
+			<h3 class="label-f m-4">Участники</h3>
+			<div class="col-md-12 table-f">
+				<table class="table">
+					<thead>
+					<tr>
+						<td><b>Имя пользователя</b></td>
+						<td align="center"><b>Очки</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for member in team.members %}
+						<tr>
+							<td>
+								<span class="{% if member.rank == 'галактикус' %}gradient-border{%else%}s-rank-style{%endif%} {{member.rank|rankclass}}">{{
+									member.rank }}
+								</span>
+								<a class="teamname-bold-f ml-2" href="{{ url_for('users.public', user_id=member.id) }}">
+									{{ member.name }}
+								</a>
+								{% if team.captain_id == member.id %}
+									<span class="box-red-f badge ml-2 p-1">Капитан</span>
+								{% endif %}
+								{% if member.millitary %}
+									<span class="box-green-f badge ml-2 p-1">Курсант</span>
+								{% endif %}
+							</td>
+							<td align="center" class="text-white-f">{{ member.score }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		{% if solves %}
+			<div class="row mt-large-f">
+				<h3 class="label-f m-4">Решения</h3>
+				<div class="col-md-12 table-f">
+
+					<table class="table">
+						<thead>
+						<tr>
+							<td align="center"><b>Задание</b></td>
+							<td align="center" class="d-none d-md-block d-lg-block"><b>Категория</b></td>
+							<td align="center"><b>Стоимость</b></td>
+							<td align="center"><b>Время сдачи</b></td>
+						</tr>
+						</thead>
+						<tbody>
+						{% for solve in solves %}
+							<tr>
+								<td align="center">
+									<a class="teamname-bold-f" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td align="center" class="d-none d-md-block d-lg-block text-white-f">{{ solve.challenge.category }}</td>
+								<td align="center" class="text-white-f">{{ solve.challenge.value }}</td>
+								<td align="center" class="solve-time">
+									<span>{{ solve.date | ruformat }}</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="text-white-f opacity-50 text-center w-100 justify-content-center align-self-center">
+					Еще нет решений
+				</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	var stats_data = {{ {
+		'type': 'team',
+		'id': team.id,
+		'name': team.name,
+		'account_id': 'me' if user is defined and user.team_id == team.id else team.id,
+		} | tojson }};
+	var team_captain = {{ (user.id == team.captain_id) | tojson }};
+</script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
+{% endblock %}
+
+{% block modal %}
+<div id="team-edit-modal" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content modal-content-f">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100 label-f">Редактировать команду</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span class="text-white-f" aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix p-5">
+				{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
+				{% from "macros/forms.html" import render_extra_fields %}
+				<form id="team-info-form" method="POST">
+					<div class="form-group">
+						<b>{{ form.name.label(class="label-modal-f") }}</b>
+						{{ form.name(class="form-control user-input-f") }}
+						<small class="form-text text-muted text-f">
+							{{ form.name.description }}
+						</small>
+					</div>
+					<div class="form-group">
+						<b>{{ form.password.label(class="label-modal-f") }}</b>
+						{{ form.password(class="form-control user-input-f") }}
+						<small class="form-text text-muted text-f">
+							{{ form.password.description }}
+						</small>
+					</div>
+					<div class="form-group">
+						<b>{{ form.confirm.label(class="label-modal-f") }}</b>
+						{{ form.confirm(class="form-control user-input-f") }}
+						<small class="form-text text-muted text-f">
+							{{ form.confirm.description }}
+						</small>
+					</div>
+					<div class="form-group">
+						<b>{{ form.affiliation.label(class="label-modal-f") }}</b>
+						{{ form.affiliation(class="form-control user-input-f") }}
+						<small class="form-text text-muted text-f">
+							{{ form.affiliation.description }}
+						</small>
+					</div>
+
+					{{ render_extra_fields(form.extra) }}
+
+					<div class="form-group">
+						<div class="form-check form-check-inline flex-wrap">
+							{{ form.official(class="form-check-input checkbox-f") }}
+							{{ form.official.label(class="form-check-label label-f") }}
+							<small class="form-text text-muted text-f w-100">
+								{{ form.official.description }}
+							</small>
+						</div>
+						<div class="form-check form-check-inline pt-3 flex-wrap">
+							{{ form.millitary(class="form-check-input checkbox-f") }}
+							{{ form.millitary.label(class="form-check-label label-f") }}
+							<small class="form-text text-muted text-f w-100">
+								{{ form.millitary.description }}
+							</small>
+						</div>
+					</div>
+
+					<div id="results">
+
+					</div>
+					{{ form.submit(class="btn button-f float-right modal-action") }}
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="team-captain-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content modal-content-f">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100 label-f">Назначить капитана</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span class="text-white-f" aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix p-5">
+				{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
+				<form id="team-captain-form" method="POST">
+					<div class="form-group">
+						{{ form.captain_id.label(class="label-modal-f") }}
+						{% for member in team.members %}
+						{# Append members to the select choices #}
+						{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
+						{% endfor %}
+						{{ form.captain_id(class="form-control custom-select select-f") }}
+					</div>
+					<div id="results">
+					</div>
+					{{ form.submit(class="btn button-f float-right modal-action") }}
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="team-invite-modal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content modal-content-f">
+			<div class="modal-header">
+				<h2 class="modal-action text-center w-100 label-f">Пригласить участников</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span class="text-white-f" aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body clearfix p-5">
+				{% with form = Forms.teams.TeamInviteForm() %}
+				<form method="POST">
+					<div class="form-group">
+						<b>{{ form.link.label(class="label-modal-f") }}</b>
+						<div class="input-group mb-3">
+							{{ form.link(id="team-invite-link", class="form-control user-input-f") }}
+							<div class="input-group-append">
+								<button id="team-invite-link-copy" class="btn invite-btn-f" type="button">
+									<span class="icon-f icon-email-f"></span>
+								</button>
+							</div>
+						</div>
+						<small class="form-text text-muted">
+							Поделитесь этой ссылкой с членами вашей команды, чтобы они смогли присоединиться к вашей команде
+						</small>
+						<small class="form-text text-muted">
+							Пригласительные ссылки могут быть повторно использованы и истекают через 1 день
+						</small>
+					</div>
+				</form>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

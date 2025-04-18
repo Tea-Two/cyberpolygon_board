@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="text-pixel-green-f">{{ user.name }}</h1>
+
+			{% if user.affiliation %}
+				<h3 class="d-inline-block">
+					<span class="badge-green-f">{{ user.affiliation }}</span>
+				</h3>
+			{% endif %}
+
+			{% for field in user.fields %}
+				<h3 class="d-inline-block label-f">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+
+			<div>
+				<h2 class="text-center label-f my-2">
+					{% if account.place %}
+						{{ account.place }} <small>место</small>
+					{% endif %}
+				</h2>
+				<h2 class="text-center label-f my-2">
+					{% if account.place %}
+						{{ account.score }} <small>очков</small>
+					{% endif %}
+				</h2>
+			</div>
+		</div>
+	</div>
+	<div class="container mb-large-f pb-large-f">
+		{% include "components/errors.html" %}
+
+		{% set solves = user.solves %}
+		{% set awards = user.awards %}
+		{% if solves or awards %}
+			<div class="row">
+				<div class="col-md-12">
+					<h3 class="label-f">Решения</h3>
+					<table class="table table-f">
+						<thead class="label-f">
+						<tr class="text-center">
+							<td class="text-left"><b>Задание</b></td>
+							<td class="d-none d-md-block d-lg-block"><b>Категория</b></td>
+							<td><b>Стоимость</b></td>
+							<td><b>Время сдачи</b></td>
+						</tr>
+						</thead>
+						<tbody class="text-white-f text-center">
+						{% for solve in solves %}
+							<tr class="bordered">
+								<td class="text-left">
+									<a class="user-text-f" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td class="d-none d-md-block d-lg-block">{{ solve.challenge.category }}</td>
+								<td>{{ solve.challenge.value }}</td>
+								<td class="solve-time">
+									<span>{{ solve.date | ruformat }}</span>
+								</td>
+							</tr>
+							<tr>
+								<td class="p-0"></td>
+								<td class="p-0"></td>
+								<td class="p-0"></td>
+								<td class="p-1"></td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="text-pixel-f opacity-50 text-center w-100 justify-content-center align-self-center">
+					У Вас еще нет решенных задач
+				</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h10-f">ЛИЧНЫЙ ЗАЧЁТ</h1>
+		</div>
+	</div>
+	<div class="container pb-large-f">
+		<div class="row">
+			{% if not users %}
+			<h3 class="text-white-f opacity-50 text-center w-100 justify-content-center align-self-center">
+				Еще нет решений
+			</h3>
+			{% else %}
+			<div class="col-md-12 table-f">
+				<table class="table">
+					<thead>
+					<tr>
+						<td class="text-center"><b>Место</b></td>
+						<td><b>Участник</b></td>
+						<td class="d-none d-md-table-cell d-lg-table-cell"><b>Команда</b></td>
+						<td class="d-none d-lg-table-cell"><b>ВУЗ</b></td>
+						<td><b>Очки</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for user in users %}
+						<tr {% if current_user.id == user.user_id %}style="background-color: #47075f;"{% endif %}>
+							<th scope="row" class="text-center text-white-f">{{ loop.index }}</th>
+							<td>
+								<span class="{% if user[0].rank == 'галактикус' %}gradient-border{%else%}s-rank-style{%endif%} {{user[0].rank|rankclass}}">
+									{{user[0].rank }}
+								</span>
+								{% if scores_visible() %}
+									<a class="teamname-bold-f ml-2" href="{{ url_for('users.public', user_id=user.user_id) }}">
+										{{ user.name | truncate(50) }}
+									</a>
+								{% else %}
+									<span class="ml-2">{{ user.name | truncate(50) }}</span>
+								{% endif %}
+								{% if user.millitary %}
+									<span class="box-green-f badge ml-2 p-1 d-none d-sm-inline">Курсант</span>
+									<span class="box-green-f badge ml-2 p-1 d-inline d-sm-none" style="border-radius: 50%;padding: 3px 8px !important;">К</span>
+								{% endif %}
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								<a class="teamname-bold-f" href="/teams/{{user.team_id}}">
+								{% if user.teamname %}
+									{{ user.teamname }}
+								{% endif %}
+								</a>
+							</td>
+							<td class="d-none d-lg-table-cell">
+								{% if user.affiliation %}
+									{% if user.affiliation | length > 50 %}
+										<span data-toggle="tooltip" data-placement="top" title="{{ user.affiliation }}">
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% else %}
+										<span>
+									{% if user.affiliation %}{{ user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% endif %}
+								{% endif %}
+							</td>
+							<td>
+								<span>
+									{% if user.score %}{{ user.score }}{% endif %}
+								</span>
+							</td>
+						</tr>
+					{% endfor %}
+					{% if place %}
+					{% if place > 25 %}
+						{% if place != 26 %}
+						<tr>
+							<th scope="row" class="text-center text-white-f"> . . . </th>
+							<td>
+								<span class="text-center text-white-f"> . . . </span>
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								<span class="text-center text-white-f"> . . . </span>
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								<span class="text-center text-white-f"> . . . </span>
+							</td>
+							<td>
+								<span class="text-center text-white-f"> . . . </span>
+							</td>
+						</tr>
+						{% endif %}
+						<tr style="background-color: #47075f;">
+							<th scope="row" class="text-center text-white-f">{{place}}</th>
+							<td>
+								<span class="{% if current_user.rank == 'галактикус' %}gradient-border{%else%}s-rank-style{%endif%} {{current_user.rank|rankclass}}">
+									{{current_user.rank }}
+								</span>
+								{% if scores_visible() %}
+									<a class="teamname-bold-f ml-2" href="{{ url_for('users.public', user_id=current_user.id) }}">
+										{{ current_user.name | truncate(50) }}
+									</a>
+								{% else %}
+									<span class="ml-2">{{ current_user.name | truncate(50) }}</span>
+								{% endif %}
+								{% if current_user.millitary %}
+									<span class="box-green-f badge ml-2 p-1">Курсант</span>
+								{% endif %}
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								<a class="teamname-bold-f" href="/teams/{{current_user.team_id}}">
+								{% if current_team.name %}
+									{{ current_team.name }}
+								{% endif %}
+								</a>
+							</td>
+							<td class="d-none d-md-table-cell d-lg-table-cell">
+								{% if current_user.affiliation %}
+									{% if current_user.affiliation | length > 50 %}
+										<span data-toggle="tooltip" data-placement="top" title="{{ current_user.affiliation }}">
+									{% if current_user.affiliation %}{{ current_user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% else %}
+										<span>
+									{% if current_user.affiliation %}{{ current_user.affiliation | truncate(50) }}{% endif %}
+								</span>
+									{% endif %}
+								{% endif %}
+							</td>
+							<td>
+								<span>
+									{% if current_user.score %}{{ current_user.score }}{% endif %}
+								</span>
+							</td>
+						</tr>
+					{% endif %}
+					{% endif %}
+					</tbody>
+				</table>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

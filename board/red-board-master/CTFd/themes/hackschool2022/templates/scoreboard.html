@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-pixel-green-f">ТУРНИРНАЯ ТАБЛИЦА</h1>
+	</div>
+</div>
+<div class="container mb-large-f pb-large-f">
+	{% include "components/errors.html" %}
+
+	<div id="score-graph" class="row d-flex align-items-center">
+		<div class="col-md-12 text-center">
+			<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+		</div>
+	</div>
+
+	{% if standings %}
+
+	<div class="form-group my-5 my-md-3 row">
+		<div class="col-12 text-center">
+			<a href="javascript:void(0)" class="top50 {% if top50 %}active">Tоп 50</a>{% else %}">Все участники</a>{% endif %}
+		</div>
+	</div>
+
+	{% endif %}
+
+	<span id="user_id" style="visibility: hidden;">{{ current_user.account_id }}</span>
+
+	{% if standings %}
+	<div id="scoreboard" class="row">
+		<div class="col-md-12">
+			<table class="table table-f">
+				<thead class="label-f">
+					<tr class="text-center">
+						<td scope="col" width="10px"><b>Место</b></td>
+						<td scope="col" class="text-left"><b>Участник</b></td>
+						<td scope="col" class="d-none d-md-block d-lg-block"><b>Школа</b></td>
+						<td scope="col"><b>Очки</b></td>
+					</tr>
+				</thead>
+				<tbody class="text-white-f text-center">
+				{% for standing in standings %}
+					<tr class="bordered {% if current_user.account_id == standing.account_id %} user-place {% endif %}">
+					{% if loop.index < 4 %}
+					<th class="text-white-f" style="padding: 5px;"><span class="icon-f icon-cup{{ loop.index }}-f"></span></th>
+					<td class="text-left">
+						<a class="user-text-f" href="{{ generate_account_url(standing.account_id) }}">
+							{{ standing.name | truncate(50) }}
+						</a>
+					</td>
+					{% else %}
+						<th scope="row">{{ loop.index }}</th>
+						<td class="text-left">
+							<a class="user-text-f" href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+							</a>
+						</td>
+					{% endif %}
+						<td class="d-none d-md-block d-lg-block">{% if standing.affiliation %}{{ standing.affiliation | truncate(50) }}{% endif %}</td>
+						<td>{{ standing.score }}</td>
+					</tr>
+					<tr>
+						<th class="p-0"></th>
+						<td class="p-0"></td>
+						<td class="p-0"></td>
+						<td class="p-1"></td>
+					</tr>
+				{% endfor %}
+				{% if place > 51 and top50 %}
+				<tr class="non-bordered">
+					<th scope="row"> . . . </th>
+					<td class="text-left">
+						. . .
+					</td>
+					<td class="d-none d-md-block d-lg-block">
+						. . .
+					</td>
+					<td>
+						. . .
+					</td>
+				</tr>
+				<tr class="non-bordered">
+					<th class="p-0"></th>
+					<td class="p-0"></td>
+					<td class="p-0"></td>
+					<td class="p-1"></td>
+				</tr>
+				{% endif %}
+				{% if place > 50 and top50 %}
+				<tr class="bordered user-place">
+					<th scope="row">{{ place }}</th>
+					<td class="text-left">
+						<a class="user-text-f" href="{{ generate_account_url(current_user.account_id) }}">
+							{{ current_user.name | truncate(50) }}
+						</a>
+					</td>
+					<td class="d-none d-md-block d-lg-block">{% if current_user.affiliation %}{{ current_user.affiliation | truncate(50)
+						}}{% endif
+						%}</td>
+					<td>{{ current_user.score }}</td>
+				</tr>
+				{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
+{% endblock %}

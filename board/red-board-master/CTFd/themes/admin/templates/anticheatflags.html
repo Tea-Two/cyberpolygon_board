@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Мутированные флаги</h1>
+	</div>
+</div>
+
+<div class="container">
+
+	<div class="row">
+		<div class="col-md-12">
+			{% if q and field %}
+			<h5 class="text-muted text-center">
+				Searching for flags with <strong>{{ field }}</strong> matching <strong>{{ q }}</strong>
+			</h5>
+			<h6 class="text-muted text-center pb-3">
+				{{ total }} results
+			</h6>
+			{% endif %}
+
+			{% with form = Forms.anticheatflags.AnticheatFlagsSearchForm(field=field, q=q) %}
+			<form method="GET" class="form-inline">
+				<div class="form-group col-md-2">
+					{{ form.field(class="form-control custom-select w-100") }}
+				</div>
+				<div class="form-group col-md-8">
+					{{ form.q(class="form-control w-100", placeholder="Поиск флагов") }}
+				</div>
+				<div class="form-group col-md-2">
+					<button type="submit" class="btn btn-primary w-100">
+						<i class="fas fa-search" aria-hidden="true"></i>
+					</button>
+				</div>
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table id="anticheat" class="table table-striped border">
+				<thead>
+					<tr>
+						<th class="sort-col"><b>Задание</b></th>
+						<th class="sort-col"><b>Флаг</b></th>
+						<th class="sort-col"><b>User(team) ID</b></th>		
+						<th class="sort-col"><b>Время генерации</b></th>		
+						<th class="sort-col"><b>Время сдачи</b></th>		
+					</tr>
+				</thead>
+				<tbody>
+				{% for flag, chal in flags.items %}
+					<tr>
+						<td>
+							{{chal.name}}
+						</td>
+						<td>
+							{{flag.content}}
+						</td>
+						<td>
+							{{flag.user_id}}
+						</td>
+						<td>
+							{{flag.generation_time}}
+						</td>
+						<td>
+							{{flag.solve_time}}
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+            {% if flags.pages > 1 %}
+            <div class="text-center">Page
+                <br>
+                {% if flags.page != 1 %}
+                <a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+                {% endif %}
+                <select class="page-select">
+                    {% for page in range(1, flags.pages + 1) %}
+                    <option {% if flags.page==page %}selected{% endif %}>{{ page }}</option>
+                    {% endfor %}
+                </select>
+                {% if flags.next_num %}
+                <a href="{{ next_page }}">&gt;&gt;&gt;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h6-f" id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
+			{% if team.oauth_id %}
+				<!-- <a href="https://majorleaguecyber.org/t/{{ team.name }}">
+					<h3><span class="badge badge-primary">Official</span></h3>
+				</a> -->
+			{% endif %}
+			{% if team.affiliation %}
+				<h3 class="d-inline-block box-purple-f box-text-f">
+					{{ team.affiliation }}
+				</h3>
+			{% endif %}
+			{% if team.millitary %}
+				<h3 class="d-inline-block box-green-f box-text-f">
+					Курсанты
+				</h3>
+			{% endif %}
+			{% for field in team.fields %}
+				<h3 class="box-green-f box-text-f">
+					{{ field.name }}: {{ field.value }}
+				</h3>
+			{% endfor %}
+			<h2 id="team-place" class="text-center box-text-f">
+				{# This intentionally hides the team's place when scores are hidden because this can be their internal profile
+			and we don't want to leak their place in the CTF. #}
+				{# Public page hiding is done at the route level #}
+				{% if scores_visible() %}
+					{% if place %}
+						{{ place }} место
+					{% endif %}
+				{% endif %}
+			</h2>
+
+			<h2 id="team-score" class="text-center box-text-f">
+				{% if score %}
+					{{ score }} очков
+				{% endif %}
+			</h2>
+			<div class="line-4-f"></div>
+		</div>
+	</div>
+	<div class="container pb-large-f">
+		{% include "components/errors.html" %}
+
+		<br>
+
+		<div class="row">
+			<h3 class="label-f m-4">Участники</h3>
+			<div class="col-md-12 table-f">
+				<table class="table">
+					<thead>
+					<tr>
+						<td><b>Имя пользователя</b></td>
+						<td align="center"><b>Очки</b></td>
+					</tr>
+					</thead>
+					<tbody>
+					{% for member in team.members %}
+						<tr>
+							<td>
+								<span class="{% if member.rank == 'галактикус' %}gradient-border{%else%}s-rank-style{%endif%} {{member.rank|rankclass}}">{{
+									member.rank }}
+								</span>
+								<a class="teamname-bold-f ml-2" href="{{ url_for('users.public', user_id=member.id) }}">
+									{{ member.name }}
+								</a>
+								{% if member.millitary %}
+									<span class="box-green-f badge ml-2 p-1">Курсант</span>
+								{% endif %}
+							</td>
+							<td align="center" class="text-white-f">{{ member.score }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		{% if solves %}
+			<div class="row mt-large-f">
+				<h3 class="label-f m-4">Решения</h3>
+				<div class="col-md-12 table-f">
+					<table class="table">
+						<thead>
+						<tr>
+							<td align="center"><b>Задание</b></td>
+							<td align="center" class="d-none d-md-block d-lg-block"><b>Категория</b></td>
+							<td align="center"><b>Стоимость</b></td>
+							<td align="center"><b>Время сдачи</b></td>
+						</tr>
+						</thead>
+						<tbody>
+						{% for solve in solves %}
+							<tr>
+								<td align="center">
+									<a class="teamname-bold-f" href="{{ url_for('challenges.listing') }}#{{ solve.challenge.name }}-{{ solve.challenge.id }}">
+										{{ solve.challenge.name }}
+									</a>
+								</td>
+								<td align="center" class="d-none d-md-block d-lg-block text-white-f">{{ solve.challenge.category }}</td>
+								<td align="center" class="text-white-f">{{ solve.challenge.value }}</td>
+								<td align="center" class="solve-time">
+									<span>{{ solve.date | ruformat }}</span>
+								</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="row min-vh-25">
+				<h3 class="text-white-f opacity-50 text-center w-100 justify-content-center align-self-center">
+					Еще нет решений
+				</h3>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

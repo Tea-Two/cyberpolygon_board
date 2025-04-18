@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="h10-f">ТУРНИРНАЯ ТАБЛИЦА</h1>
+	</div>
+</div>
+<div class="container pb-large-f">
+	{% include "components/errors.html" %}
+	<div class="notif-box">
+		<div id="score-graph" class="row d-flex align-items-center" style="margin-top: 10px;">
+			<div class="col-md-12 text-center">
+				<i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+			</div>
+		</div>
+	</div>
+
+	{% cache 60, CacheKeys.PUBLIC_SCOREBOARD_TABLE %}
+	{% if standings %}
+	
+	{% if standings %}
+	<div class="form-group my-5 my-md-3 row">
+		<div class="col-6 text-center">
+			<a href="#" class="millitary {% if millitary %}active{% endif %}">Курсанты</a>
+		</div>
+		<div class="col-6 text-center">
+			<a href="#" class="official {% if official %}active{% endif %}">Официальный зачёт</a>
+		</div>
+	</div>
+	{% endif %}
+
+	<div id="scoreboard" class="row">
+		<div class="col-md-12 table-f">
+			<table class="table">
+				<thead>
+					<tr>
+						<td width="10px"><b>Место</b></td>
+						<td align="center"><b>Команда</b></td>
+						<td align="center" class="d-none d-md-block"><b>ВУЗ</b></td>
+						<td align="center"><b>Очки</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for standing in standings %}
+					<tr align="center">
+					{% if loop.index == 1 %}
+						<th class="text-white-f" style="padding: 5px;"><span class="icon-f icon-cup1-f"></span></th>
+						<td align="center">
+							<a class="teamname-bold-f first-place-teamname" href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+							</a>
+							{% if standing.millitary %}
+								<span class="box-green-f badge ml-2 p-1 d-none d-sm-inline">Курсанты</span>
+								<span class="box-green-f badge ml-2 p-1 d-inline d-sm-none" style="border-radius: 50%;padding: 3px 8px !important;">К</span>
+							{% endif %}
+						</td>
+					{% elif loop.index == 2 %}
+						<th class="text-white-f" style="padding: 5px;"><span class="icon-f icon-cup2-f"></span></th>
+						<td align="center">
+							<a class="teamname-bold-f second-place-teamname" href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+							</a>
+							{% if standing.millitary %}
+								<span class="box-green-f badge ml-2 p-1 d-none d-sm-inline">Курсанты</span>
+								<span class="box-green-f badge ml-2 p-1 d-inline d-sm-none" style="border-radius: 50%;padding: 3px 8px !important;">К</span>
+							{% endif %}
+							
+						</td>
+					{% elif loop.index == 3 %}
+						<th class="text-white-f" style="padding: 5px;"><span class="icon-f icon-cup3-f"></span></th>
+						<td align="center">
+							<a class="teamname-bold-f third-place-teamname" href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+							</a>
+							{% if standing.millitary %}
+								<span class="box-green-f badge ml-2 p-1 d-none d-sm-inline">Курсанты</span>
+								<span class="box-green-f badge ml-2 p-1 d-inline d-sm-none" style="border-radius: 50%;padding: 3px 8px !important;" style="border-radius: 50%;padding: 3px 8px !important;">К</span>
+							{% endif %}
+						</td>
+					{% else %}
+						<th class="text-white-f">{{ loop.index }}</th>
+						<td align="center">
+							<a class="teamname-bold-f" href="{{ generate_account_url(standing.account_id) }}">
+								{{ standing.name | truncate(50) }}
+							</a>
+							{% if standing.millitary %}
+								<span class="box-green-f badge ml-2 p-1 d-none d-sm-inline">Курсанты</span>
+								<span class="box-green-f badge ml-2 p-1 d-inline d-sm-none" style="border-radius: 50%;padding: 3px 8px !important;">К</span>
+							{% endif %}
+						</td>
+				{% endif %}
+						<td align="center" class="d-none d-md-block">
+							{% if standing.affiliation %}
+								{% if standing.affiliation | length > 50 %}
+								<span data-toggle="tooltip" data-placement="top" title="{{ standing.affiliation }}">
+									{% if standing.affiliation %}{{ standing.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% else %}
+								<span>
+									{% if standing.affiliation %}{{ standing.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% endif %}
+							{% endif %}
+						</td>
+						<td align="center"><span class="text-white-f">{{ standing.score }}</span></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endif %}
+	{% endcache %}
+</div>
+<script>
+	
+</script>
+{% endblock %}
+
+{% block scripts %}
+	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/scoreboard.js') }}"></script>
+{% endblock %}

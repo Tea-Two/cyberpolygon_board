@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1>Инциденты</h1>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table id="anticheat" class="table table-striped border">
+				<thead>
+					<tr>
+						<th class="sort-col"><b>№</b></th>
+						<th class="sort-col"><b>Время</b></th>
+						<th class="sort-col"><b>Инцидент</b></th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for incidents in incidents %}
+					<tr>
+						<td class="text-center" width="10%">{{ loop.index }}</td>
+						<td>
+							{{incidents.event_time}}
+						</td>
+						<td>
+							{{incidents.content}}
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+

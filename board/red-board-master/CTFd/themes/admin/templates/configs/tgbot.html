@@ -1,0 +1,55 @@
+<div role="tabpanel" class="tab-pane config-section" id="tgbot">
+    <form method="POST" autocomplete="off" class="w-100">
+
+        <div class="form-group">
+            <label>
+                Telegram Bot URL
+                <small class="form-text text-muted">
+                    Telegram Bot URL for notifications.
+                </small>
+            </label>
+            <input class="form-control" id='tg_bot_notifications_url' name='tg_bot_notifications_url' type='text'
+                placeholder="" {% if tg_bot_notifications_url is defined and tg_bot_notifications_url !=None
+                %}value="{{ tg_bot_notifications_url }}" {% endif %}>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Telegram Bot Secret
+                <small class="form-text text-muted">
+                    Telegram Bot Secret for notifications.
+                </small>
+            </label>
+            <input class="form-control" id='tg_bot_notifications_secret' name='tg_bot_notifications_secret' type='text'
+                placeholder="" {% if tg_bot_notifications_secret is defined and tg_bot_notifications_secret !=None
+                %}value="{{ tg_bot_notifications_secret }}" {% endif %}>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Telegram Dev Chat ID
+                <small class="form-text text-muted">
+                    Telegram Chat ID for admin notifications.
+                </small>
+            </label>
+            <input class="form-control" id='tg_bot_notifications_dev_chat' name='tg_bot_notifications_dev_chat'
+                type='text' placeholder="" {% if tg_bot_notifications_dev_chat is defined and
+                tg_bot_notifications_dev_chat !=None %}value="{{ tg_bot_notifications_dev_chat }}" {% endif %}>
+        </div>
+
+        <div class="form-group">
+            <label>
+                Telegram Users Chat ID
+                <small class="form-text text-muted">
+                    Telegram Chat ID for users notifications.
+                </small>
+            </label>
+            <input class="form-control" id='tg_bot_notifications_users_chat' name='tg_bot_notifications_users_chat'
+                type='text' placeholder="" {% if tg_bot_notifications_users_chat is defined and
+                tg_bot_notifications_users_chat !=None %}value="{{ tg_bot_notifications_users_chat }}" {% endif %}>
+        </div>
+
+
+        <button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+    </form>
+</div>

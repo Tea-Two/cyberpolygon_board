@@ -1,0 +1,126 @@
+{% extends "admin/base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+    <div class="container">
+        <h1>Античит</h1>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            {% if q and field %}
+            <h5 class="text-muted text-center">Searching for submissions with <strong>{{ field }}</strong> matching
+                <strong>{{ q }}</strong>
+            </h5>
+            <h6 class="text-muted text-center pb-3">Page {{ logsubmission.page }} of {{ logsubmission.total }} results
+            </h6>
+            {% endif %}
+
+            <form method="GET" class="form-inline">
+                <div class="form-group col-md-2">
+                    <label for="sel1" class="sr-only">Search Field</label>
+                    <select class="form-control custom-select w-100" id="sel1" name="field">
+                        <option value="team" {% if field=='team' %}selected{% endif %}>Team</option>
+                        <option value="challenge" {% if field=='challenge' %}selected{% endif %}>Challenge</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-8">
+                    <label for="team-name-search" class="sr-only">Parameter</label>
+                    <input type="text" class="form-control w-100" id="team-name-search" name="q"
+                        placeholder="Search for matching submission" {% if q %}value="{{q}}" {% endif %}>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="team-name-search" class="sr-only">Search</label>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"
+                            aria-hidden="true"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="teamsboard" class="table table-striped border">
+                <thead>
+                    <tr>
+                        <th class="text-center sort-col"><b>ID</b></th>
+                        <th class="text-center sort-col"><b>Time delta</b></th>
+                        <th class="sort-col"><b>Team</b></th>
+                        <th class="sort-col"><b>Challenge</b></th>
+                        <th class="sort-col"><b>IP open</b></th>
+                        <th class="sort-col"><b>IP submit</b></th>
+                        <th class="text-center sort-col"><b>User open</b></th>
+                        <th class="text-center sort-col"><b>User submit</b></th>
+                        <th class="text-center sort-col"><b>Time open</b></th>
+                        <th class="text-center sort-col"><b>Time submit</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in logsubmission.items %}
+                    <tr>
+                        <td class="text-center" id="{{ sub.id }}">
+                            {{ sub.id }}
+                        </td>
+                        <td class="text-center" id="{{ sub.time_delta }}">
+                            {{ sub.time_delta }}
+                        </td>
+                        <td class="team" id="{{ sub.team }}">
+                            {{ sub.team }}
+                        </td>
+                        <td class="chal" id="{{ sub.challenge }}">
+                            {{ sub.challenge }}
+                        </td>
+                        <td>
+                            {{ sub.ip_open }}
+                        </td>
+                        <td>
+                            {{ sub.ip_submit }}
+                        </td>
+                        <td>
+                            {{ sub.user_open }}
+                        </td>
+                        <td>
+                            {{ sub.user_submit }}
+                        </td>
+                        <td class="text-center solve-time">
+                            <span>{{ sub.date_open | ruformat }}</span>
+                        </td>
+                        <td class="text-center solve-time">
+                            <span>{{ sub.date_submit | ruformat }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if logsubmission.pages > 1 %}
+            <div class="text-center">Page
+                <br>
+                {% if logsubmission.page != 1 %}
+                <a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+                {% endif %}
+                <select class="page-select">
+                    {% for page in range(1, logsubmission.pages + 1) %}
+                    <option {% if logsubmission.page==page %}selected{% endif %}>{{ page }}</option>
+                    {% endfor %}
+                </select>
+                {% if logsubmission.next_num %}
+                <a href="{{ next_page }}">&gt;&gt;&gt;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

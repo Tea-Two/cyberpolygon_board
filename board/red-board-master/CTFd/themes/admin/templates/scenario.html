@@ -1,0 +1,107 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Scenario</h1>
+    </div>
+</div>
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <div>
+            <table id="challenges" class="table table-striped border">
+                <thead>
+                <tr>
+                    <th class="sort-col text-center"><b>ID</b></th>
+                    <th class="sort-col"><b>Name</b></th>
+                    <th class="sort-col text-center"><b>Time</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                <form method="POST" action="/admin/scenario/process_scenario" enctype="multipart/form-data">
+                    <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                    {% for challenge in challenges %}
+                    <tr>
+                        <td class="text-center">{{ challenge.id }}</td>
+                        <td>{{ challenge.name }}</td>
+                        <td class="d-none d-md-table-cell d-lg-table-cell">
+                            <div class="time-selector">
+                                <input type="range" 
+                                       name="time_{{ challenge.id }}" 
+                                       min="480" max="1080" step="15" 
+                                       value="{% if challenge.open_time %}{{ challenge.open_time.hour * 60 + challenge.open_time.minute }}{% else %}540{% endif %}"  
+                                       class="time-slider form-control"
+                                       oninput="updateTimeDisplay(this)">
+									<span class="time-display">
+										{% if challenge.open_time %}{{ challenge.open_time.strftime('%H:%M') }}{% else %}09:00{% endif %}
+									</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            <button type="submit" class="btn btn-primary">Сохранить сценарий</button>
+                        </td>
+                    </tr>
+                </form>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateTimeDisplay(slider) {
+    // Преобразуем минуты в часы и минуты
+    const totalMinutes = parseInt(slider.value);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    // Форматируем время (добавляем ведущий ноль при необходимости)
+    const formattedTime = 
+        (hours < 10 ? '0' + hours : hours) + ':' + 
+        (minutes < 10 ? '0' + minutes : minutes);
+    
+    // Обновляем отображение времени
+    const displayElement = slider.parentElement.querySelector('.time-display');
+    if (displayElement) {
+        displayElement.textContent = formattedTime;
+    }
+}
+
+// Инициализация всех ползунков при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.time-slider').forEach(slider => {
+        updateTimeDisplay(slider);
+    });
+});
+</script>
+
+<style>
+.time-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-slider {
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.time-display {
+    min-width: 50px;
+    text-align: center;
+    font-weight: bold;
+}
+</style>
+{% endblock %}
+
+{% block entrypoint %}
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/challenges.js') }}"></script>
+{% endblock %}

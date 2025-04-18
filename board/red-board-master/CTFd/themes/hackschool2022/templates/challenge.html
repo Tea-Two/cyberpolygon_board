@@ -1,0 +1,156 @@
+<div class="modal-dialog" role="document">
+	<div class="modal-content modal-content-f">
+		<div class="modal-body">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span class="text-white-f" aria-hidden="true">&times;</span>
+			</button>
+			<ul class="nav nav-tabs chal-solv-f p-1">
+				<li class="nav-item">
+					<a class="nav-link active challenge-info-btn text-f" href="#challenge">Задача</a>
+				</li>
+				{% block solves %}
+					<li class="nav-item">
+						<a class="nav-link challenge-solves-btn challenge-solves text-f text-center" href="#solves">
+							{% if solves != None %}
+								{{ solves }} {% if solves == 1 %}Решение{% elif solves < 5 %}Решения{% else %}Решений{% endif %}
+							{% endif %}
+						</a>
+					</li>
+				{% endblock %}
+			</ul>
+			<div role="tabpanel">
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane fade show active" id="challenge">
+						<h2 class='challenge-name text-center pt-3 label-f'>
+							{{ challenge.name }}
+						</h2>
+						<h3 class="challenge-value text-center label-f">
+							{{ challenge.value }}
+						</h3>
+
+						<div class="challenge-tags text-center mb-3">
+							{% block tags %}
+								{% for tag in tags %}
+									<span class='text-f badge-green-f challenge-tag px-2'>{{ tag }}</span>
+								{% endfor %}
+							{% endblock %}
+						</div>
+
+						<span class="challenge-desc text-white-f">{% block description %}{{ challenge.html }}{% endblock %}</span>
+
+						<span class="challenge-connection-info">
+							{% block connection_info %}
+								{% set conn = challenge.connection_info %}
+								{% if not conn %}
+								{% elif conn.startswith("http") %}
+									{{ conn | urlize(target="_blank") }}
+								{% else %}
+									<code>{{ conn }}</code>
+								{% endif %}
+							{% endblock %}
+						</span>
+
+						<div class="challenge-hints hint-row row">
+							{% for hint in hints %}
+								<div class='col-md-12 hint-button-wrapper text-center mb-3'>
+									<a class="btn btn-hint btn-block load-hint button-outline-f px-1" href="javascript:;" data-hint-id="{{ hint.id }}">
+										{% if hint.content %}
+											<small>
+												Посмотреть подсказку
+											</small>
+										{% else %}
+											{% if hint.cost %}
+												<small>
+													Разблокировать подсказку за {{ hint.cost }} очков
+												</small>
+											{% else %}
+												<small>
+													Посмотреть подсказку
+												</small>
+											{% endif %}
+										{% endif %}
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+
+						<div class="row challenge-files text-center pb-3">
+							{% for file in files %}
+								<div class='col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block'>
+									<a class='btn button-file-f btn-file mb-1 d-inline-block px-2 w-100 text-truncate'
+									   href='{{ file }}'>
+										<i class="fas fa-download"></i>
+										<small>
+											{% set segments = file.split('/') %}
+											{% set file = segments | last %}
+											{% set token = file.split('?') | last %}
+											{% if token %}
+												{{ file | replace("?" + token, "") }}
+											{% else %}
+												{{ file }}
+											{% endif %}
+										</small>
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+
+						{% if max_attempts > 0 %}
+						<div class="row text-center">
+							<div class="col-md-12">
+								<p class="text-white-f">
+									{{ attempts }}/{{ max_attempts }} попыток
+								</p>
+							</div>
+						</div>
+						{% endif %}
+
+						<div class="row submit-row">
+							<div class="col-12 col-sm-8 col-md-9 form-group pr-sm-0">
+								{% block input %}
+									<input id="challenge-id" class="challenge-id" type="hidden" value="{{ challenge.id }}">
+									<input id="challenge-input" class="challenge-input user-input-f" type="text" name="answer" placeholder="flag{w0w_h4ck3r_h3r3}"/>
+								{% endblock %}
+							</div>
+							<div class="col-12 col-sm-4 col-md-3 form-group key-submit pl-sm-0">
+								{% block submit %}
+								<button id="challenge-submit" class="challenge-submit button-f text-f w-100 h-100 text-center" style="font-size: 16px;" type="submit">
+									Отправить
+								</button>
+								{% endblock %}
+							</div>
+						</div>
+
+						<div class="row notification-row">
+							<div class="col-md-12">
+								<div id="result-notification" class="alert alert-dismissable text-center w-100"
+									 role="alert" style="display: none;">
+									<strong id="result-message"></strong>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div role="tabpanel" class="tab-pane fade" id="solves">
+						<div class="row">
+							<div class="col-md-12">
+								<table class="table table-f">
+									<thead class="label-f">
+									<tr class="text-center">
+										<td><b>Имя</b>
+										</td>
+										<td><b>Дата</b>
+										</td>
+									</tr>
+									</thead>
+									<tbody class="text-white-f text-center" id="challenge-solves-names">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

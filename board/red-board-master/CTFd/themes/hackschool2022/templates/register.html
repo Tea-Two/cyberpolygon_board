@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-pixel-green-f">РЕГИСТРАЦИЯ</h1>
+	</div>
+</div>
+<div class="container mt-large-f mb-large-f pb-large-f">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			{% include "components/errors.html" %}
+
+			{% if integrations.tg() %}
+			<div class="col-md-6 offset-md-3">
+				<script async src="https://telegram.org/js/telegram-widget.js?12" data-telegram-login="{{ Configs.tg_bot_username }}"
+					data-size="large" data-auth-url="/tgoauth" data-request-access="write"></script>
+			</div>
+			<hr>
+			{% endif %}
+
+			{% with form = Forms.auth.RegistrationForm() %}
+			{% from "macros/forms.html" import render_extra_fields %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form">
+				<div class="form-group">
+					<b>{{ form.name.label(class="label-f") }}</b>
+					{{ form.name(class="form-control user-input-f", value=name) }}
+					<small class="form-text text-muted text-f">
+						Ваше имя пользователя на сайте
+					</small>
+				</div>
+				<div class="form-group">
+					<b>{{ form.email.label(class="label-f") }}</b>
+					{{ form.email(class="form-control user-input-f", value=email) }}
+					<small class="form-text text-muted text-f">
+						Не видна никому кроме пользователя
+					</small>
+				</div>
+				<div class="form-group">
+					<b>{{ form.password.label(class="label-f") }}</b>
+					{{ form.password(class="form-control user-input-f", value=password) }}
+					<small class="form-text text-muted text-f">
+						Пароль используется для входа в ваш аккаунт
+					</small>
+				</div>
+				<div class="form-group">
+					<b>{{ form.affiliation.label(class="label-f") }}</b>
+					{{ form.affiliation(class="form-control user-input-f", value=affiliation) }}
+				</div>
+				{{ form.nonce() }}
+
+				{{ render_extra_fields(form.extra) }}
+
+				<div class="row pt-3">
+					<div class="col-md-12">
+						{{ form.submit(class="button-f float-right text-f px-5") }}
+					</div>
+				</div>
+
+				{% if Configs.tos_or_privacy %}
+				<div class="row pt-3">
+					<div class="col-md-12 text-center">
+						<small class="text-muted text-center">
+							Регистрируясь, Вы соглашаетесь с
+							<a href="{{ Configs.privacy_link }}" rel="noopener" target="_blank">политикой конфиденциальности</a>
+							и <a href="{{ Configs.tos_link }}" rel="noopener" target="_blank">условиями обслуживания</a>
+						</small>
+					</div>
+				</div>
+				{% endif %}
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

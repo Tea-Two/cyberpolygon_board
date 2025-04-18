@@ -1,0 +1,91 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+    <div class="container">
+        <a href="{{ url_for('views.static_html', route='/') }}" class="navbar-brand d-md-none d-lg-inline">
+            {% if Configs.ctf_logo %}
+                <img class="img-responsive ctf_logo" src="{{ url_for('views.files', path=Configs.ctf_logo) }}" height="25" alt="{{ Configs.ctf_name }}">
+                <span class="navbar-text-f">{{ Configs.ctf_name }}</span>
+            {% else %}
+                <span class="navbar-text-f">{{ Configs.ctf_name }}</span>
+            {% endif %}
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#base-navbars"
+                aria-controls="base-navbars" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="base-navbars">
+            <ul class="navbar-nav mr-auto">
+                {% for page in Plugins.user_menu_pages %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ page.route }}"><span class="navbar-text-f">{{ page.title }}</span></a>
+                    </li>
+                {% endfor %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('views.rules') }}"><span class="navbar-text-f">ПРАВИЛА</span></a>
+                </li>
+            </ul>
+
+            <hr class="d-sm-flex d-md-flex d-lg-none">
+
+            <ul class="navbar-nav ml-md-auto d-block d-sm-flex d-md-flex">
+                {% if authed() %}
+                    {% if is_admin() %}
+                        <li class="nav-item">
+                            <a class="navbar-text-f" href="{{ url_for('admin.view') }}">
+                                <i class="fas fa-wrench pr-1"></i>Админ-панель
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="navbar-text-f" href="{{ url_for('views.notifications') }}">
+                            <span class="icon-f icon-notif-f"></span>
+                            <span class="badge badge-pill badge-danger badge-notification"></span>
+                            <span class="p-2 d-md-none">Уведомления</span>
+                        </a>
+                    </li>
+                    {% if Configs.user_mode == "teams" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('teams.private') }}">
+                            <span class="d-block" data-toggle="tooltip" data-placement="bottom" title="Team">
+                                <i class="fas fa-users d-none d-md-block d-lg-none"></i>
+                            </span>
+                            <span class="d-sm-block d-md-none d-lg-block">
+                                <i class="fas fa-users pr-1"></i>Команда
+                            </span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="navbar-text-f" href="{{ url_for('users.private') }}">
+                            <span class="icon-f icon-user-f"></span>
+                            <span class="p-2 d-md-none">Профиль
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-text-f" href="{{ url_for('views.settings') }}">
+                            <span class="icon-f icon-settings-f"></span>
+                            <span class="p-2 d-md-none">Настройки
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="navbar-text-f" href="{{ url_for('auth.logout') }}">
+                            <span class="icon-f icon-logout-f"></span>
+                            <span class="p-2 nav-span-f d-md-none">Выход</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <div style="display:flex">
+                        <span class="login-register-f">
+                            <a class="login-btn-f navbar-text-white-f" href="{{ url_for('auth.login') }}">ВХОД</a>
+                            {% if registration_visible() %}
+                            <a class="register-btn-f navbar-text-white-f" href="{{ url_for('auth.register') }}">РЕГИСТРАЦИЯ</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h10-f">СОБРАТЬ ЭКИПАЖ</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 offset-md-2 text-center">
+				<p class="text-center-f">Добро пожаловать на {{ Configs.ctf_name }}!</p>
+				<p class="text-center-f">
+					Для отправления в полет Вам необходимо собрать свой экипаж космического корабля или вступить в существующий.
+				</p>
+			</div>
+		</div>
+		<div class="row pt-3">
+			<div class="col-12 col-sm-5 offset-sm-2 text-center">
+				<a class="button-f px-2" href="{{ url_for('teams.join') }}">Вступить в команду</a>
+			</div>
+			<div class="text-center col-sm-5 text-md-left pt-5 pt-sm-0">
+				<a class="button-f px-2" href="{{ url_for('teams.new') }}">Создать команду</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

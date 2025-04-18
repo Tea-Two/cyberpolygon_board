@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="h10-f">КОМАНДЫ</h1>
+	</div>
+</div>
+<div class="line-4-f"></div>
+<div class="container mt-large-f pb-large-f">
+	<div class="row">
+		<div class="col-md-12">
+			{% if q and rufield %}
+			<h5 class="text-muted text-center text-white-f">
+				Поиск команд с полем <strong>{{ rufield }}</strong> и значением <strong>{{ q }}</strong>
+			</h5>
+			<h6 class="text-muted text-center pb-3 text-white-f">
+				Страница {{ teams.page }} с результатом {{ teams.total }}
+			</h6>
+			{% endif %}
+
+			{% with form = Forms.teams.PublicTeamSearchForm(field=field, q=q) %}
+			<form method="GET" class="form-inline">
+				<div class="form-group col-md-2">
+					{{ form.field(class="form-control custom-select select-f w-100 text-white-f mb-sm-2") }}
+				</div>
+				<div class="form-group col-md-8">
+					{{ form.q(class="form-control user-input-f text-f w-100 mb-sm-2", placeholder="Поиск команд") }}
+				</div>
+				<div class="form-group col-md-2">
+					<button type="submit" class="button-f w-100 mb-sm-2">
+						<i class="fas fa-search" aria-hidden="true"></i>
+					</button>
+				</div>
+			</form>
+			{% endwith %}
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-12 table-f mx-1">
+			<table class="table">
+				<thead>
+					<tr>
+						<td class="text-center"><b>Команда</b></td>
+						<td class="d-none d-sm-table-cell" align="center"><b>ВУЗ</b></td>
+					</tr>
+				</thead>
+				<tbody>
+				{% for team in teams.items %}
+					<tr>
+						<td class="hide-sm text-center text-sm-left">
+						{% if scores_visible() %}
+							<a class="teamname-bold-f" class="text-white-f" href="{{ url_for('teams.public', team_id=team.id) }}">{{ team.name | truncate(50) }}</a>
+						{% else %}
+							<span class="text-white-f">{{ team.name | truncate(50) }}</span>
+						{% endif %}
+						{% if team.millitary %}
+							<span class="box-green-f badge ml-2 p-1">Курсанты</span>
+						{% endif %}
+						</td>
+						<td class="d-none d-sm-table-cell" align="center">
+							{% if team.affiliation %}
+								{% if team.affiliation | length > 50 %}
+								<span data-toggle="tooltip" data-placement="top" title="{{ team.affiliation }}">
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% else %}
+								<span>
+									{% if team.affiliation %}{{ team.affiliation | truncate(50) }}{% endif %}
+								</span>
+								{% endif %}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% if teams.pages > 1 %}
+	<div class="row">
+		<div class="col-md-12">
+			<div class="text-center">
+				<div class="text-white-f p-2">
+					Страница
+				</div>
+				{% if teams.page != 1 %}
+				<a class="navbar-text-f pl-0 pr-0" href="{{ prev_page }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				<select class="page-select select-f text-white-f p-1">
+					{% for page in range(1, teams.pages + 1) %}
+					<option {% if teams.page == page %}selected{% endif %}>{{ page }}</option>
+					{% endfor %}
+				</select>
+				{% if teams.next_num %}
+				<a class="navbar-text-f pl-0 pr-0" href="{{ next_page }}">&gt;&gt;&gt;</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

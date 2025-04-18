@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Messages</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {% with form = Forms.notifications.MessageForm() %}
+            <form method="POST" id="messages_form">
+                <div class="form-group">
+                    <b>{{ form.body.label }}</b>
+                    {{ form.body(class="form-control", rows="3") }}
+                    <small class="form-text text-muted">
+                        {{ form.body.description }}
+                    </small>
+                </div>
+                <div class="float-right">
+                    {{ form.submit(class="btn btn-success text-center") }}
+                </div>
+            </form>
+            {% endwith %}
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <hr>
+            <div id="messages-list">
+                {% for message in messages %}
+                <div class="card bg-light mb-4">
+                    <button type="button" data-mess-id="{{ message.id }}"
+                        class="delete-message close position-absolute p-3" style="right:0;" data-dismiss="alert"
+                        aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>{{ message.body | safe }}</p>
+                        </blockquote>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block entrypoint %}
+<script defer src="{{ url_for('views.themes', theme='admin', path='js/pages/messages.js') }}"></script>
+{% endblock %}

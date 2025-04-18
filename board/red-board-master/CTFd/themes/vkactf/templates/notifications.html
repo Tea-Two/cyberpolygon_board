@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="jumbotron">
+		<div class="container">
+			<h1 class="h8-f">УВЕДОМЛЕНИЯ</h1>
+		</div>
+	</div>
+	<div class="line-4-f"></div>
+	<div class="container mt-large-f pb-large-f">
+		{% if not notifications %}
+			<h3 class="text-white-f opacity-50 text-center w-100 justify-content-center align-self-center">
+				Уведомления отсутствуют
+			</h3>
+		{% endif %}
+		{% for notification in notifications %}
+		<div class="notif-box">
+			<h3 class="label-f m-25">{{ notification.title }}</h3>
+			<div class="notif-text" style="color: #d6d6d6;">
+				<p>{{ notification.html }}</p>
+				<span>{{ notification.date | ruformat }}</span>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ url_for('views.themes', path='js/pages/notifications.js') }}"></script>
+{% endblock %}
